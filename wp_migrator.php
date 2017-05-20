@@ -7,28 +7,11 @@ global $wpdb;
 $old_url = $_REQUEST["old_url"]; 
 $new_url = $_REQUEST["new_url"];  
 
-$wpdb->query( 
-         "
-            update $wpdb->posts set guid = replace(guid, '$old_url', '$new_url'),
-            post_content = replace(post_content, '$old_url', '$new_url')
-		"	
-);
+$wpdb->query("update $wpdb->posts set guid = replace(guid, '$old_url', '$new_url'), post_content = replace(post_content, '$old_url', $new_url')");
 
-$wpdb->query( 
-        "
-            update $wpdb->postmeta set meta_value = replace(meta_value, '$old_url', '$new_url')
-		"
-);
+$wpdb->query("update $wpdb->postmeta set meta_value = replace(meta_value, '$old_url', '$new_url')");
 
-$wpdb->query(
-        "
-            update $wpdb->options
-            set option_value = '$new_url'
-            where option_value like '$old_url'
-		"
-);
-
-echo $query;
+$wpdb->query("update $wpdb->options set option_value = '$new_url' where option_value like '$old_url'");
 
 ?>
 
