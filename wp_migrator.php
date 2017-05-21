@@ -3,7 +3,6 @@
 if(isset($_REQUEST["old_url"]))
 {
     require_once( './wp-load.php' );
-    require_once('./wp-includes/option.php');
 
     global $wpdb;
 
@@ -14,8 +13,6 @@ if(isset($_REQUEST["old_url"]))
 
     $wpdb->query("update $wpdb->postmeta set meta_value = replace(meta_value, '$old_url', '$new_url')");
 
-    $wpdb->query("update $wpdb->options set option_value = '$new_url' where option_value like '$old_url'");
-    
     $results = $wpdb->get_results("select option_name from $wpdb->options where option_value like '%$old_url%'");
     
     foreach($results as $option)
@@ -26,7 +23,10 @@ if(isset($_REQUEST["old_url"]))
         
         update_option($option->option_name, $value);
     }
+    
+    echo "<p>Enlaces cambiados.</p>";
 }
+
 ?>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" >
