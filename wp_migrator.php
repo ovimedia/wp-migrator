@@ -15,20 +15,36 @@ if(isset($_REQUEST["old_url"]))
     $wpdb->query("update $wpdb->postmeta set meta_value = replace(meta_value, '$old_url', '$new_url')");
     
     $wpdb->query("update $wpdb->options set option_value = '$new_url' where option_value like '$old_url'");
-/*
+
     $results = $wpdb->get_results("select option_name from $wpdb->options where option_value like '%$old_url%'");
     
     foreach($results as $option)
     {        
         $value = get_option($option->option_name);
 
-        $value = json_decode(str_replace($old_url, $new_url, json_encode($value)));
+        replace_options($value, $old_url, $new_url);
         
         update_option($option->option_name, $value);
     }
-    */
+
     echo "<p>Enlaces cambiados.</p>";
 }
+
+    function replace_options(&$options, $old_url, $new_url)
+    {
+        if(is_array($options) || is_object($options) )
+        {
+            foreach($options as $option => &$field)
+            {
+                if (is_array($field) || is_object($field))
+                   $field = replace_options($field, $old_url, $new_url);
+                else
+                    $field = str_replace($old_url, $new_url, $field);            
+            }
+        }
+        else 
+            $options = str_replace($old_url, $new_url, $options);  
+    }
 
 ?>
 
